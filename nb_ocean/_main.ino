@@ -80,6 +80,13 @@ void setup() {
 }
 
 void loop() {
+
+  //digitalWrite(DE, HIGH); // enable chip
+  //Serial.println("hi"); // send msg
+  //finishSending(); // wait until msg is sent
+  //digitalWrite(DE, LOW); // disable chip
   isMaster? master(): slave();
+  
+
 }
 

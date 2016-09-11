@@ -382,7 +382,7 @@ const byte neighbourhoodSize[numNeighbourhoods] = {
 // **********************************************************************************
 // Definitions of Reactors, based on node address and chain.
 
-// Constants to define how reactors and global overload function
+// Constants to define how reactors and global  function
 // NOTE: DO NOT CHANGE NAMES!
 const byte reactorMultiplier = 4; // num nodes * this value = threshold
 const int  reactorTimeout = 3000; // A value of 0 effectively disables reactors

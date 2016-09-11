@@ -52,10 +52,10 @@ void initSlave() {
 
 void slave() {
   checkComm();
-  checkSensors();
-  cycleOn?
-    runCycle():
-    defaultBehaviour();
+  //checkSensors();
+  //cycleOn?
+    //runCycle():
+    //defaultBehaviour();
 }
 
 byte mainCommand = NODATA;
@@ -69,17 +69,64 @@ void checkComm() {
   const byte data = Serial.read();
   if (data == NODATA)
     return;
-  
+    
+      
   // Check if the message is for this node
-  if (getAddress(data) != myAddress)
+  if (getAddress(data) != myAddress){
+    //Serial.println("NO MESSAGE");
+   // Serial.println(data);
+    //Serial.println(getAddress(data), DEC);
+    //Serial.println(myAddress, DEC);
+     //Serial.println("NO MESSAGE");
     return;
+  }
+  
   
   // Store the message
   const byte message = getMessage(data);
   
+  //Serial.print("MESSAGE: ");
+  //Serial.println(message);
+  
+    //byte byte30 = 30;
+    if (message == 40){
+        LEDOff(0);
+        delay(1000);
+        
+        LEDOn(0);
+        delay(100);
+        LEDOff(0);
+        delay(100);
+        LEDOn(0);
+        delay(100);
+        LEDOff(0);
+        delay(100);
+        LEDOn(0);
+        delay(100);
+        LEDOff(0);
+        delay(100);
+        LEDOn(0);
+        delay(100);
+        LEDOff(0);
+        delay(100);
+   } else {
+        LEDOff(0);
+        delay(1000);
+        
+        LEDOn(0);
+        delay(500);
+        LEDOff(0);
+        delay(500);
+        LEDOn(0);
+        delay(500);
+        LEDOff(0);
+   }
+  
   // Check if this is the first byte of a command
   if (mainCommand == NODATA) {
     if (message == STATUS) {
+      
+      //Serial.println("STATUS MESSAGE");
       // NOTE: The major error response to a status request is in the majorError function
       if (!sensorReporting || numActiveSensors == 0) {
         send(myAddress, 0);
@@ -165,7 +212,7 @@ void checkComm() {
               break;
             case EVENING:
               if (debug)
-                PRINTLN("Evening mode enabled.");
+                PRINTLN("Evening mode enabled SLAVE.");
               break;
             case DORMANT:
               if (debug)

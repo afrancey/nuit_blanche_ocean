@@ -189,7 +189,7 @@ void master() {
         PRINT("\nNode died: ", addr);
         PRINTLN(", ms: ", millis() - time);
       }
-    }
+    }    
     
     // Activate checking dead nodes
     if (numLiveNodes == 0 ||
@@ -228,6 +228,12 @@ inline byte read(const byte address) {
 
 // Check the status of a given node
 boolean checkStatus(const byte address) {
+  
+  byte tempAddress = 2;
+  byte tempMessage = 30;
+  sendCommand(tempAddress,tempMessage);
+  
+  
   if (address == maxNumSlaves)
     return false;
   
@@ -238,8 +244,9 @@ boolean checkStatus(const byte address) {
     return response == 0;
   
   // Check if node is checked node
-  if (checkIndex == address)
+  if (checkIndex == address){
     return true;
+  }
   
   // Read how many sensors are active
   const byte numActive = read(address);
@@ -385,7 +392,7 @@ void setGlobalDefaultBehaviour(const byte allow) {
         PRINT("\nDormant mode");
         break;
       case EVENING:
-        PRINT("\nEvening mode");
+        PRINT("\nEvening mode MASTER");
         break;
       case NORMAL:
       case NONE:

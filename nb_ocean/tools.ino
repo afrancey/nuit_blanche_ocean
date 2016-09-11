@@ -536,3 +536,7 @@ inline byte inPin(const byte chain) {
   return A0 + chain;
 }
 
+void printMyAddress(){
+  Serial.println("My Address: ");
+  Serial.println(myAddress);
+}

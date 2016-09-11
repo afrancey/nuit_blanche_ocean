@@ -154,12 +154,156 @@ inline void initShiftPWM() {
   while(runPWMTests) {
     if (debug)
       PRINTLN("Testing PWM...");
-    testShiftPWM();
+    testShiftPWM_chainers();
     delay(100);
   }
 }
 
-inline void testShiftPWM() {
+inline void testShiftPWM_chainers(){
+  int chain;
+  int brightness;
+  int chainOut;
+  for (chain = 1; chain <= 6; chain++){
+    for (brightness = 0;brightness < maxPWMBrightness; brightness++){
+      for (chainOut = 0; chainOut < maxOutputsPerRegister; chainOut ++){
+        
+        ShiftMuxPWM.SetOne(chain, chainOut, brightness);
+        ShiftMuxPWM.SetOne(chain-1, chainOut, maxPWMBrightness - brightness);
+      }
+      delay(20);
+    }
+  }
+      
+}
+  
+
+inline void testShiftPWM(){
+  int chainlen;
+  int chainPat;
+  boolean lightOn;
+  int stage;
+  int chain;
+  int chainOut;
+  for (stage = 0;stage < patternLength; stage ++){
+    ShiftMuxPWM.SetAll(0);
+    
+    for (chain = 0;chain < 6; chain ++){
+      chainlen = chainLengths[chain];
+      chainPat = pattern[stage][chain];
+      
+      for (chainOut = 0; chainOut < chainlen * maxOutputsPerRegister; chainOut ++){
+        lightOn = (chainPat >> chainOut) & 1; //bit shift over and read first byte, either 0 or 1, starts with rightmost bit, shifts them to the right
+        if (lightOn) {
+          ShiftMuxPWM.SetOne(chain, chainOut, maxPWMBrightness);
+          Serial.print(" stage: ");
+          Serial.print(stage);
+          Serial.print(" chain: ");
+          Serial.print(chain);
+          Serial.print(" out: ");
+          Serial.println(chainOut);
+        }
+      }
+    }
+    delay(100);
+  }
+  ShiftMuxPWM.SetAll(0);
+  delay(100);
+} 
+
+inline void testShiftPWM_fadeover(){
+  int chainlen;
+  int chainPat;
+  boolean lightOn;
+  int stage;
+  int chain;
+  int chainOut;
+  for (stage = 0;stage < patternLength; stage ++){
+    ShiftMuxPWM.SetAll(0);
+    
+    for (chain = 0;chain < 6; chain ++){
+      chainlen = chainLengths[chain];
+      chainPat = pattern[stage][chain];
+      
+      for (chainOut = 0; chainOut < chainlen * maxOutputsPerRegister; chainOut ++){
+        lightOn = (chainPat >> chainOut) & 1; //bit shift over and read first byte, either 0 or 1, starts with rightmost bit, shifts them to the right
+        if (lightOn) {
+          ShiftMuxPWM.SetOne(chain, chainOut, maxPWMBrightness);
+          //Serial.print(" stage: ");
+          //Serial.print(stage);
+          //Serial.print(" chain: ");
+          //Serial.print(chain);
+          //Serial.print(" out: ");
+          //Serial.println(chainOut);
+        }
+      }
+    }
+    delay(100);
+  }
+  ShiftMuxPWM.SetAll(0);
+  delay(100);
+} 
+
+inline void testShiftPWM_OLD2(){
+    // Fade in all outputs
+    int brightness;
+  for(brightness = 0; brightness < maxPWMBrightness; brightness++) {
+    ShiftMuxPWM.SetAll(brightness);
+    delay(20);
+  }
+  
+  //fade out
+  for(brightness = 0; brightness < maxPWMBrightness; brightness++) {
+    ShiftMuxPWM.SetAll(maxPWMBrightness - brightness);
+    delay(20);
+  }
+  //fade in
+    for(brightness = 0; brightness < maxPWMBrightness; brightness++) {
+    ShiftMuxPWM.SetAll(brightness);
+    delay(20);
+  }
+  
+  //fade out
+  for(brightness = 0; brightness < maxPWMBrightness; brightness++) {
+    ShiftMuxPWM.SetAll(maxPWMBrightness - brightness);
+    delay(20);
+  }
+//  
+//  
+//  // test on the SQUARE, uses the pattern defined in definitions.h
+//
+  int chainlen;
+  int chainPat;
+  boolean lightOn;
+  int stage;
+  int chain;
+  int chainOut;
+  for (stage = 0;stage < patternLength; stage ++){
+    ShiftMuxPWM.SetAll(0);
+    
+    for (chain = 0;chain < 6; chain ++){
+      chainlen = chainLengths[chain];
+      chainPat = pattern[stage][chain];
+      
+      for (chainOut = 0; chainOut < chainlen * maxOutputsPerRegister; chainOut ++){
+        lightOn = (chainPat >> chainOut) & 1; //bit shift over and read first byte, either 0 or 1, starts with rightmost bit, shifts them to the right
+        if (lightOn) {
+          ShiftMuxPWM.SetOne(chain, chainOut, maxPWMBrightness);
+          Serial.print(" stage: ");
+          Serial.print(stage);
+          Serial.print(" chain: ");
+          Serial.print(chain);
+          Serial.print(" out: ");
+          Serial.println(chainOut);
+        }
+      }
+    }
+    delay(100);
+  }
+  ShiftMuxPWM.SetAll(0);
+  delay(100);
+}
+
+inline void testShiftPWM_OLD() {
   byte chain, reg, led;
   int output, brightness;
   
@@ -167,10 +311,11 @@ inline void testShiftPWM() {
 //  ShiftMuxPWM.OneByOneFast();
 
   // Fade in all outputs
-//  for(brightness = 0; brightness < maxPWMBrightness; brightness++) {
-//    ShiftMuxPWM.SetAll(brightness);
-//    delay(20);
-//  }
+  for(brightness = 0; brightness < maxPWMBrightness; brightness++) {
+    ShiftMuxPWM.SetAll(brightness);
+    delay(20);
+  }
+  
 //  // Hold all outputs
 //  delay(20*maxPWMBrightness);
 //  // Fade out all outputs
@@ -179,7 +324,8 @@ inline void testShiftPWM() {
 //    delay(20);
 //  }
 
-  // Fade in and out all chains together, from the top, one output at a time
+
+//  // Fade in and out all chains together, from the top, one output at a time
 //  for (output = 0; output < maxOutputsPerChain; output++) {
 //    for (brightness = 0; brightness < maxPWMBrightness; brightness++) {
 //      for (chain = 0; chain < maxChainsPerNode; chain++) {
@@ -209,18 +355,18 @@ inline void testShiftPWM() {
 //    }
 //  }
 
-  // Fade in, hold, and fade out 3 outputs at a time
-  for (chain = 0; chain < maxChainsPerNode; chain++) {
-    for(output = 0; output < maxOutputsPerChain + 2; output++) {
-      for(brightness = 0; brightness <= maxPWMBrightness; brightness++) {
-        if (output < maxOutputsPerChain)
-          ShiftMuxPWM.SetOne(chain, output, brightness);
-        if (output > 1)
-          ShiftMuxPWM.SetOne(chain, output - 2, maxPWMBrightness - brightness);
-        delay(10);
-      }
-    }
-  }
+//  // Fade in, hold, and fade out 3 outputs at a time
+//  for (chain = 0; chain < maxChainsPerNode; chain++) {
+//    for(output = 0; output < maxOutputsPerChain + 2; output++) {
+//      for(brightness = 0; brightness <= maxPWMBrightness; brightness++) {
+//        if (output < maxOutputsPerChain)
+//          ShiftMuxPWM.SetOne(chain, output, brightness);
+//        if (output > 1)
+//          ShiftMuxPWM.SetOne(chain, output - 2, maxPWMBrightness - brightness);
+//        delay(10);
+//      }
+//    }
+//  }
 
   // Fade chain and register index in and out on each register
 //  for (brightness = 0; brightness < maxPWMBrightness; brightness++) {

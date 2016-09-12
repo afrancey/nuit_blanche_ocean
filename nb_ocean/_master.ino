@@ -173,6 +173,11 @@ void master() {
                 Serial.println('A');
             } else if (incoming == 'b'){
                 Serial.println('B');
+                digitalWrite(RE, LOW);
+                delay(1);
+                sendCommand(B0010, BLINK);
+                delay(1);
+                digitalWrite(RE, HIGH);
             } else if (incoming == 'c'){
                 Serial.println('C');
             } else {
@@ -180,7 +185,7 @@ void master() {
             }
         }
         digitalWrite(RE, LOW);
-        doTimedTestMessage();
+        //doTimedTestMessage();
   }
   
   byte times;

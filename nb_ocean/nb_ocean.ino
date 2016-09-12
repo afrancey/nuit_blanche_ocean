@@ -5,6 +5,7 @@
 
 // NOTE: DO NOT CHANGE OR REMOVE THIS FOR ANY REASON!
 #include "definitions.h"
+#include <elapsedMillis.h>
 
 // Change this value to identify a new code version: increment by 1
 // Even values turn off the red LED, odd values turn it on
@@ -26,8 +27,8 @@ boolean defaultFlag = true;
 // inhibiting neighbour response initiation from that specific node,
 // since the Master will never know that the node's sensors were triggered.
 // NOTE: DO NOT CHANGE NAME!
-boolean sensorReporting = true;
-//boolean sensorReporting = false; // handy for initial debug
+//boolean sensorReporting = true;
+boolean sensorReporting = false; // handy for initial debug
 
 // Variable to control the likelihood of background rolls vs randomized outputs
 // Various settings will change the background behaviour:
@@ -68,6 +69,7 @@ const byte maxNodeAddress [numNodeTypes] = {
 // Any node addresses that are unused.
 // NOTE: DO NOT CHANGE NAME!
 const byte unusedSlaveAddresses[] = {
+  1, 3, 4, 5, 6, 7, 8,
   masterAddress}; // The master address + any unused slave addresses
 
 // **********************************************************************************

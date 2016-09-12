@@ -120,6 +120,20 @@ void buildLiveList() {
   checkIndex = maxNumSlaves;
 }
 
+elapsedMillis testMessageTimer = 0;
+void doTimedTestMessage(){
+    if( testMessageTimer > 4000 ){
+        PRINTLN("Timed Message Sending...");
+        testMessageTimer = 0;
+        send(B0010, B1101);
+        
+        PRINTLN("Timed Message Sending...Flipping LED");
+        LEDOn(0);
+        delay(100);
+        LEDOff(0);
+    }
+}
+
 void master() {
   // If comm is disabled, the master's role is nonexistant
   if (!commEnabled) {
@@ -133,6 +147,8 @@ void master() {
       }
     }
     return;
+  } else { // Communication is enabled. Send test message.
+      doTimedTestMessage();
   }
   
   byte times;
@@ -228,10 +244,6 @@ inline byte read(const byte address) {
 
 // Check the status of a given node
 boolean checkStatus(const byte address) {
-  
-  byte tempAddress = 2;
-  byte tempMessage = 30;
-  sendCommand(tempAddress,tempMessage);
   
   
   if (address == maxNumSlaves)

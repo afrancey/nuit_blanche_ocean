@@ -60,6 +60,7 @@ void slave() {
 
 byte mainCommand = NODATA;
 byte commandChains = NODATA;
+
 void checkComm() {
   // Check if comm is enabled
   if (!commEnabled)
@@ -79,8 +80,7 @@ void checkComm() {
     //Serial.println(myAddress, DEC);
      //Serial.println("NO MESSAGE");
     return;
-  }
-  
+  }  
   
   // Store the message
   const byte message = getMessage(data);
@@ -89,38 +89,21 @@ void checkComm() {
   //Serial.println(message);
   
     //byte byte30 = 30;
-    if (message == 40){
-        LEDOff(0);
-        delay(1000);
-        
-        LEDOn(0);
-        delay(100);
-        LEDOff(0);
-        delay(100);
-        LEDOn(0);
-        delay(100);
-        LEDOff(0);
-        delay(100);
-        LEDOn(0);
-        delay(100);
-        LEDOff(0);
-        delay(100);
-        LEDOn(0);
-        delay(100);
-        LEDOff(0);
-        delay(100);
-   } else {
-        LEDOff(0);
-        delay(1000);
-        
-        LEDOn(0);
-        delay(500);
-        LEDOff(0);
-        delay(500);
-        LEDOn(0);
-        delay(500);
-        LEDOff(0);
-   }
+    // THIS PRODUCED A MAJOR ERROR. TRY CREATING A NEW MESSAGE TYPE
+    if (message == B1101){
+        for( int i=0; i<5; i++){ // Blink 5 times
+            LEDOn(0);
+            delay(100);
+            LEDOff(0);
+            delay(100);
+        }
+    } else {
+        for( int i=0; i<2; i++){ // Blink 5 times
+            LEDOn(0);
+            delay(50);
+            LEDOff(0);
+        }
+    }
   
   // Check if this is the first byte of a command
   if (mainCommand == NODATA) {

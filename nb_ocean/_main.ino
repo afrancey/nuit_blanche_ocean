@@ -6,7 +6,7 @@ const boolean commEnabled = true;
 //const boolean commEnabled = false; // handy for initial debug
 
 // Setting this true will enable sensors
-const boolean sensorsEnabled = true;
+const boolean sensorsEnabled = false;
 //const boolean sensorsEnabled = false; // handy for initial debug
 
 // Setting this true to run the PWM tests

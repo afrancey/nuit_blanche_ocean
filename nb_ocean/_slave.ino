@@ -87,23 +87,7 @@ void checkComm() {
   
   //Serial.print("MESSAGE: ");
   //Serial.println(message);
-  
-    //byte byte30 = 30;
-    // THIS PRODUCED A MAJOR ERROR. TRY CREATING A NEW MESSAGE TYPE
-    if (message == B1101){
-        for( int i=0; i<5; i++){ // Blink 5 times
-            LEDOn(0);
-            delay(100);
-            LEDOff(0);
-            delay(100);
-        }
-    } else {
-        for( int i=0; i<2; i++){ // Blink 5 times
-            LEDOn(0);
-            delay(50);
-            LEDOff(0);
-        }
-    }
+ 
   
   // Check if this is the first byte of a command
   if (mainCommand == NODATA) {
@@ -147,6 +131,7 @@ void checkComm() {
       case REACTR: // Reactor command
       case NGHBOR: // Neighbour command
       case GLOBAL: // Global behaviour command
+      case BLINK:
         send(myAddress, message);
         mainCommand = message;
         break;
@@ -217,11 +202,12 @@ void checkComm() {
       case SENSOR: // Sensor command
       case REACTR: // Reactor command
       case NGHBOR: // Neighbour command
+      case BLINK:
         send(myAddress, message);
         commandChains = message;
         if (debug)
           PRINTLN("\nFirst set of command chains: ", commandChains);
-        break;
+        break;        
       default:
         if (debug)
           PRINTLN("\nSecond Message: ", message);
@@ -259,6 +245,14 @@ void checkComm() {
           if (bitRead(commandChains, chain)) {
             sensorBehaviour(chain);
           }
+        }
+        break;
+      case BLINK:
+        for( int i=0; i<5; i++){ // Blink 5 times 
+            LEDOn(0); 
+            delay(100); 
+            LEDOff(0); 
+            delay(100); 
         }
         break;
       default: // Pretty sure there is no possible way to get here, but just in case...

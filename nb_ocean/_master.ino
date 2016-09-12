@@ -125,12 +125,7 @@ void doTimedTestMessage(){
     if( testMessageTimer > 4000 ){
         PRINTLN("Timed Message Sending...");
         testMessageTimer = 0;
-        send(B0010, B1101);
-        
-        PRINTLN("Timed Message Sending...Flipping LED");
-        LEDOn(0);
-        delay(100);
-        LEDOff(0);
+        sendCommand(B0010, BLINK);
     }
 }
 
@@ -148,7 +143,44 @@ void master() {
     }
     return;
   } else { // Communication is enabled. Send test message.
-      doTimedTestMessage();
+        
+        /** Partially working communication test.
+        
+        The code for reading serial below works, but only conditionally. A few
+        things to note:
+        
+        1. The red LED is connected to the switch that turns on and off reading
+        from computer serial on the master. Therefore LEDOn and LEDOff interfere
+        with serial read. They cannot be used during serial operations on the
+        Master.
+        
+        2. The delay before the read is necessary in this case because otherwise 
+        serial messages from the computer end up getting thrown out. This will
+        be an issue moving forward. Currently, only messages sent during the
+        delay (when the light is on) show up in the serial buffer.
+        */
+        
+        // Delay and flash the light.
+        LEDOn(0);
+        delay(500);
+        LEDOff(0);
+        
+        // Switch modes and read serial input from computer.
+        digitalWrite(RE, HIGH);
+        while (Serial.available()){
+            char incoming = Serial.read();
+            if( incoming == 'a' ){
+                Serial.println('A');
+            } else if (incoming == 'b'){
+                Serial.println('B');
+            } else if (incoming == 'c'){
+                Serial.println('C');
+            } else {
+                Serial.print(incoming);
+            }
+        }
+        digitalWrite(RE, LOW);
+        doTimedTestMessage();
   }
   
   byte times;
@@ -370,12 +402,12 @@ boolean checkStatus(const byte address) {
       reactorTime[reactor] = millis();
     }
   }
-  
+  /*
   // Disable default behaviour for a while
   setGlobalDefaultBehaviour(NONE);
   
   // Notify the neighbours of the active chains
-  notifyNeighbours(address, activeChains);
+  notifyNeighbours(address, activeChains);*/
   
   return true;
 }

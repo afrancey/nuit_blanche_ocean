@@ -57,6 +57,7 @@ const byte SENSOR = B010; // Command to fake a sensor activation (for testing mo
 const byte REACTR = B011; // Command to perform reactor behaviour
 const byte NGHBOR = B100; // Command to perform neighbour behaviour
 const byte GLOBAL = B111; // Notification to expect a global subcommand
+const byte BLINK  = B101; // Notification to expect a global subcommand
 
 // Global subcommands
 const byte GBASIC = B001; // Command to go into basic mode

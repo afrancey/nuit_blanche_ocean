@@ -33,9 +33,9 @@ inline void printAvailableMemory() {
 // Sets up the communication
 inline void initComm() {
   isMaster = digitalRead(DE); // Checks if node is the Master
-  ground(DE); // keeps debug statements off the bus
+  ground(DE); // keeps debug statements off the bus: HIGH to enable
   if (isMaster)
-    ground(RE); // listens to the bus, ignores messages sent by a connected PC
+    ground(RE); // listens to the bus, ignores messages sent by a connected PC: LOW to enable
   else if (usingTestBed && !commEnabled)
     digitalWrite(DE, HIGH); // make the slaves send debug info over comm
   Serial.begin(115200); // starts serial comm

@@ -123,12 +123,12 @@ void buildLiveList() {
 elapsedMillis testMessageTimer = 0;
 void doTimedTestMessage(){
     if( testMessageTimer > 4000 ){
-        PRINTLN("Timed Message Sending...");
         testMessageTimer = 0;
         sendCommand(B0010, BLINK);
     }
 }
 
+byte level = 1;
 void master() {
   // If comm is disabled, the master's role is nonexistant
   if (!commEnabled) {
@@ -146,23 +146,14 @@ void master() {
         
         /** Partially working communication test.
         
-        The code for reading serial below works, but only conditionally. A few
-        things to note:
-        
-        1. The red LED is connected to the switch that turns on and off reading
-        from computer serial on the master. Therefore LEDOn and LEDOff interfere
-        with serial read. They cannot be used during serial operations on the
-        Master.
-        
-        2. The delay before the read is necessary in this case because otherwise 
-        serial messages from the computer end up getting thrown out. This will
-        be an issue moving forward. Currently, only messages sent during the
-        delay (when the light is on) show up in the serial buffer.
+        The code here works pretty well, some messages are dropped, but about
+        50% are successful (anecdotally). We can work to get this threshold up,
+        but this is a good starting point.
         */
         
         // Delay and flash the light.
         LEDOn(0);
-        delay(500);
+        delay(1);
         LEDOff(0);
         
         // Switch modes and read serial input from computer.
@@ -175,9 +166,16 @@ void master() {
                 Serial.println('B');
                 digitalWrite(RE, LOW);
                 delay(1);
-                sendCommand(B0010, BLINK);
-                delay(1);
+                level += 1;
+                if( level > B111 )
+                    level = 1;
+                if (!sendCommand(B0010, BLINK))
+                    return;
+                if(!sendCommand(B0010, level))
+                    return;
                 digitalWrite(RE, HIGH);
+                delay(1);
+                Serial.println(level);
             } else if (incoming == 'c'){
                 Serial.println('C');
             } else {
@@ -188,6 +186,7 @@ void master() {
         //doTimedTestMessage();
   }
   
+  /*
   byte times;
   const byte timesLimit = 5;
   boolean checkingThisAddress = false;
@@ -259,7 +258,7 @@ void master() {
   }
   
   // Check if the mode has been changed
-  updateGlobalMode();
+  updateGlobalMode();*/
 }
 
 inline byte read(const byte address) {

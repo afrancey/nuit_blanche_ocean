@@ -84,7 +84,8 @@ void checkComm() {
   
   // Store the message
   const byte message = getMessage(data);
-  
+  if(debug)
+    Serial.print(message);
   //Serial.print("MESSAGE: ");
   //Serial.println(message);
  
@@ -131,8 +132,8 @@ void checkComm() {
       case REACTR: // Reactor command
       case NGHBOR: // Neighbour command
       case GLOBAL: // Global behaviour command
-      case BLINK:
-        send(myAddress, message);
+      case BLINK:  // Don't send address
+        send(myAddress, message); // Send and continue
         mainCommand = message;
         break;
       default:
@@ -197,13 +198,28 @@ void checkComm() {
       mainCommand = NODATA;
       return;
     }
+    
+    if (mainCommand == BLINK){
+        if(debug)
+            PRINTLN("Blinking with a delay of: ", message*message*message);
+        for( int i=0; i<5; i++){ // Blink 5 times 
+            LEDOn(0);
+            delay(message*message*message); 
+            LEDOff(0); 
+            delay(message*message*message); 
+        }
+        send(myAddress, message);
+        mainCommand = NODATA;
+        return;
+    }
+    
     switch(mainCommand) {
       // All of these commands are 3 byte commands
       case SENSOR: // Sensor command
       case REACTR: // Reactor command
       case NGHBOR: // Neighbour command
-      case BLINK:
-        send(myAddress, message);
+      //case BLINK:  // Don't send address
+        send(myAddress, message); // Send and continue
         commandChains = message;
         if (debug)
           PRINTLN("\nFirst set of command chains: ", commandChains);
@@ -247,19 +263,21 @@ void checkComm() {
           }
         }
         break;
-      case BLINK:
+      /*case BLINK:
+        if(debug)
+            PRINTLN("Blinking with a delay of: ", commandChains*commandChains*commandChains);
         for( int i=0; i<5; i++){ // Blink 5 times 
-            LEDOn(0); 
-            delay(100); 
+            LEDOn(0);
+            delay(commandChains*commandChains*commandChains); 
             LEDOff(0); 
-            delay(100); 
+            delay(commandChains*commandChains*commandChains); 
         }
-        break;
+        break;*/
       default: // Pretty sure there is no possible way to get here, but just in case...
         MAJORERROR(commError, 6, "checkComm: Unsupported third message");
     }
   }
-  send(myAddress, message);
+  //send(myAddress, message);
   mainCommand = NODATA;
   commandChains = NODATA;
 }
